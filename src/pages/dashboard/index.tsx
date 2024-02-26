@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { CrudFilter, useList } from "@refinedev/core";
 import dayjs from "dayjs";
 import Stats from "../../components/dashboard/Stats";
@@ -8,20 +8,12 @@ import { TabView } from "../../components/dashboard/TabView";
 import { RecentSales } from "../../components/dashboard/RecentSales";
 import { IChartDatum, TTab } from "../../interfaces";
 
-const filters: CrudFilter[] = [
-    {
-        field: "start",
-        operator: "eq",
-        value: dayjs()?.subtract(7, "days")?.startOf("day"),
-    },
-    {
-        field: "end",
-        operator: "eq",
-        value: dayjs().startOf("day"),
-    },
-];
-
 export const Dashboard: React.FC = () => {
+    const currentDate = new Date(Date.now());
+    const pastWeekDate = dayjs(currentDate).add(-7, "day").toDate();
+
+    const [filters, setFilters] = useState<CrudFilter[]>([]);
+
     const { data: dailyRevenue } = useList<IChartDatum>({
         resource: "dailyRevenue",
         filters,
@@ -36,6 +28,27 @@ export const Dashboard: React.FC = () => {
         resource: "newCustomers",
         filters,
     });
+
+    const [dateRange, setDateRange] = useState<[Date, Date]>([pastWeekDate, currentDate]);
+
+    const updateFilters = (startDate: Date, endDate: Date) => {
+        setFilters([
+            {
+                field: "start",
+                operator: "eq",
+                value: dayjs(startDate).startOf("day").add(1, "day").toDate(),
+            },
+            {
+                field: "end",
+                operator: "eq",
+                value: dayjs(endDate).startOf("day").add(1, "day").toDate(),
+            },
+        ]);
+    };
+
+    useEffect(() => {
+        updateFilters(dateRange[0], dateRange[1]);
+    }, [dateRange]);
 
     const useMemoizedChartData = (d: any) => {
         return useMemo(() => {
@@ -54,14 +67,33 @@ export const Dashboard: React.FC = () => {
     const memoizedOrdersData = useMemoizedChartData(dailyOrders);
     const memoizedNewCustomersData = useMemoizedChartData(newCustomers);
 
+    //adding sample data so that the secondary line can be rendered
+    let sampleData: IChartDatum[] = [];
+    if (memoizedRevenueData) {
+        sampleData = Array.from(
+            memoizedRevenueData,
+            (x: IChartDatum) => {
+                const value = Number(x.value)
+                const sampleValue = value + (Math.floor(Math.random() * 500) - 250)
+                const valueChangePercentage = (sampleValue - value) / 100
+                return {
+                    date: x.date,
+                    value: value,
+                    sampleValue,
+                    valueChangePercentage,
+                }
+            }
+        )
+    }
+
     const tabs: TTab[] = [
         {
             id: 1,
-            label: "Daily Revenue",
+            label: "Online store sessions",
             content: (
                 <ResponsiveAreaChart
                     kpi="Daily revenue"
-                    data={memoizedRevenueData}
+                    data={sampleData}
                     colors={{
                         stroke: "rgb(54, 162, 235)",
                         fill: "rgba(54, 162, 235, 0.2)",
@@ -71,7 +103,7 @@ export const Dashboard: React.FC = () => {
         },
         {
             id: 2,
-            label: "Daily Orders",
+            label: "Net return value",
             content: (
                 <ResponsiveBarChart
                     kpi="Daily orders"
@@ -85,7 +117,21 @@ export const Dashboard: React.FC = () => {
         },
         {
             id: 3,
-            label: "New Customers",
+            label: "Total orders",
+            content: (
+                <ResponsiveAreaChart
+                    kpi="New customers"
+                    data={memoizedNewCustomersData}
+                    colors={{
+                        stroke: "rgb(76, 175, 80)",
+                        fill: "rgba(54, 162, 235, 0.2)",
+                    }}
+                />
+            ),
+        },
+        {
+            id: 4,
+            label: "Conversion rate",
             content: (
                 <ResponsiveAreaChart
                     kpi="New customers"
@@ -106,7 +152,11 @@ export const Dashboard: React.FC = () => {
                 dailyOrders={dailyOrders}
                 newCustomers={newCustomers}
             />
-            <TabView tabs={tabs} />
+            <TabView
+                tabs={tabs}
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+            />
             <RecentSales />
         </>
     );

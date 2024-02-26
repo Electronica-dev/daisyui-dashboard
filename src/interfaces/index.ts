@@ -28,7 +28,7 @@ export interface IAddress {
 
 export interface IChartDatum {
     date: string;
-    value: string;
+    value: number;
 }
 
 export interface IChart {
@@ -52,6 +52,29 @@ export interface ICategory {
     id: number;
     title: string;
     isActive: boolean;
+}
+
+export interface ILinearGradientLineSVG {
+    width?: string;
+    height?: string;
+    startColor: string;
+    endColor: string;
+    opacity?: string;
+    strokeDasharray?: string;
+}
+
+export interface IDateCard {
+    fromDate: string;
+    toDate: string;
+    startColor: string;
+    endColor: string;
+    strokeDashArray?: string;
+    opacity?: string;
+}
+
+export interface ITooltipCard {
+    title: string;
+    body: string;
 }
 
 export type TTab = {
