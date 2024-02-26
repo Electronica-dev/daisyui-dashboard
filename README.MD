@@ -37,11 +37,13 @@ npm run dev
 
 Your application will be accessible at http://localhost:5173
 
-![Dashboard Page](https://refine.ams3.cdn.digitaloceanspaces.com/blog/2023-09-06-daisy-ui-panel/dash-1.png "Dashboard Page")
+![Graph](./assets/graph.png "Graph")
 
-![Product List Page](https://refine.ams3.cdn.digitaloceanspaces.com/blog/2023-09-06-daisy-ui-panel/dash-2.png "Product List Page")
+![Dropdown](./assets/dropdown.png "Dropdown")
 
-![Product Edit Page](https://refine.ams3.cdn.digitaloceanspaces.com/blog/2023-09-06-daisy-ui-panel/dash-3.png "Product Edit Page")
+![Daterange picker](./assets/daterangepicker.png "Daterange picker")
+
+![Menu](./assets/menu.png "Menu")
 
 ### Resources
 
