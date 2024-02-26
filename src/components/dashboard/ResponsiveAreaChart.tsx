@@ -93,6 +93,8 @@ export const ResponsiveAreaChart = ({
                     activeDot={false}
                     // opacity={0.3}
                     stroke="url(#colorDashed)"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
                 />
                 <Line
                     type="monotone"
@@ -101,6 +103,8 @@ export const ResponsiveAreaChart = ({
                     dot={false}
                     activeDot={false}
                     stroke="url(#colorSolid)"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
                 />
             </LineChart>
         </ResponsiveContainer>
